@@ -101,10 +101,6 @@ cd $wd
 # Combine
 head -1 phewasresults/PheWas_chunk_000.csv > phewasresults/PheWas_All_snps.csv; tail -n +2 -q phewasresults/PheWas_chunk*.csv >> phewasresults/PheWas_All_snps.csv
 
-
-
-
-
 # Remove NAs from PheWas_All_snps.csv, as there are many NA results for phenotypes with < 20 cases or monomorphic snps
 
 awk 'BEGIN{FS=OFS=","} $4!="NA"{print $0}' phewasresults/PheWas_All_snps.csv > phewasresults/PheWas_All_snps_without_NA.csv
@@ -113,6 +109,14 @@ awk 'BEGIN{FS=OFS=","} $4=="NA"{print $0}' phewasresults/PheWas_All_snps.csv > p
 
 # Make combined Manhattan plot
 Rscript combined_phewas_manhatthanplot.r
+
+# Clean temporary stuff
+rm chunk_*.raw
+rm chunk_*.sh
+rm chunk_*.r
+rm chunk_*.err
+rm chunk_*.out
+rm -r splits
 ```
  
  
