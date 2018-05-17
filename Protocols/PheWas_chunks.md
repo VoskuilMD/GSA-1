@@ -36,7 +36,7 @@ input=[prefix-to-plink-binary-file]  #GSA_chr_1-22
 # # This should actually be done before the association testing
 cd $wd
 
-# Prune our dataset using with a 100kb window, 5 step, and 0.3 R2. 
+# Prune our dataset using with a 500kb window, 5 step, and 0.3 R2. 
 module load plink
 
 plink --bfile /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_maf001/mergedplinkfiles/$input --out $wd/$input-prune --indep-pairwise 500 5 0.3  
