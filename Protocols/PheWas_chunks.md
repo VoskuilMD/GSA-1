@@ -90,6 +90,8 @@ cd $wd
 # Make sure you have got all the necessary files in your workdirectory
 
 for j in chunk_*.sh; do sbatch "$j"; done
+
+## on boxy this took ~20 hours for all snps
 ```
 
 
