@@ -45,7 +45,7 @@ plink --bfile /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/re
 
 plink --bfile /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_maf001/mergedplinkfiles/$input --extract $wd/$input-prune.prune.in --make-bed --out $wd/$input
 
-# 1085628 variants after pruning
+# 666610 variants after pruning
 ```
 
 1. Prepare genotype files
@@ -100,10 +100,10 @@ for j in chunk_*.sh; do sbatch "$j"; done
 ```
 cd $wd
 
-# Combine
+# Combine (takes about 13 minutes)
 head -1 phewasresults/PheWas_chunk_000.csv > phewasresults/PheWas_All_snps.csv; tail -n +2 -q phewasresults/PheWas_chunk*.csv >> phewasresults/PheWas_All_snps.csv
 
-# Remove NAs from PheWas_All_snps.csv, as there are many NA results for phenotypes with < 20 cases or monomorphic snps
+# Remove NAs from PheWas_All_snps.csv, as there are many NA results for phenotypes with < 20 cases or monomorphic snps (started 14:37)
 
 awk 'BEGIN{FS=OFS=","} $4!="NA"{print $0}' phewasresults/PheWas_All_snps.csv > phewasresults/PheWas_All_snps_without_NA.csv
 awk 'BEGIN{FS=OFS=","} $4=="NA"{print $0}' phewasresults/PheWas_All_snps.csv > phewasresults/PheWas_All_snps_NA.csv
