@@ -1,6 +1,7 @@
 library(PheWAS)
 
 # Read combined results
+setwd('phewasresults/')
 results = read.csv('PheWas_All_snps_without_NA.csv', sep = ',', colClasses=c("phenotype"="character"))
 
 # Supporting files for plot
