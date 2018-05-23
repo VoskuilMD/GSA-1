@@ -109,7 +109,7 @@ awk 'BEGIN{FS=OFS=","} $4!="NA"{print $0}' phewasresults/PheWas_All_snps.csv > p
 awk 'BEGIN{FS=OFS=","} $4=="NA"{print $0}' phewasresults/PheWas_All_snps.csv > phewasresults/PheWas_All_snps_NA.csv
 
 
-# Make combined Manhattan plot
+# Make combined Manhattan plot (best to use the screen option here - very large file to read into R)
 Rscript combined_phewas_manhatthanplot.r
 
 # Clean temporary stuff
