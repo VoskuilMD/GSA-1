@@ -29,16 +29,15 @@ awk -F"\t" '$3 == "TRUE" { print $1"\t"$2 }' covariates.diag.gen.txt > CD.sample
 awk -F"\t" '$3 == "FALSE" { print $1"\t"$2 }' covariates.diag.gen.txt > UC.samples
 
 
-#binary
+# binary
 awk 'BEGIN {OFS = "\t"} { print $1,$2,$3,$4,$5,$6,$7,$10,$11,$12,$13,$14,$15,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$34,$35,$36,$37,$38,$39,$40,$41,$42}' phenotypes.raw.txt > binary.phenotypes.txt
 
-#quantitative
+# quantitative
 awk 'BEGIN {OFS = "\t"} { print $1,$2,$8,$9,$16,$32,$33,$43,$44,$45,$46,$47,$48,$49,$50,$51,$52,$53,$54,$55}' phenotypes.raw.txt > quantitative.phenotypes.txt
 
 # do actual logistic/linear regression for all phenotypes with diagnosis and first 5 PC's as covariates. 
-#binary/logistic (screen -r 21978.pts-9.calculon/screen -r 22545.pts-15.calculon )
 plink --bfile tmp --covar covariates.diag.gen.txt --covar-number 4-9 --ci 0.95 --pheno binary.phenotypes.txt --all-pheno --out binary.hide.covar --logistic hide-covar --allow-no-sex
-#quantitative/linear (screen -r 7773.pts-27.calculon/screen -r 24976.pts-38.calculon) 
+
 plink --bfile tmp --covar covariates.diag.gen.txt --covar-number 4-9 --ci 0.95 --pheno quantitative.phenotypes.txt --all-pheno --out quantitative.hide.covar --linear hide-covar --allow-no-sex
 
 
@@ -68,6 +67,41 @@ plink --bfile tmp --covar covariates.gen.txt --keep UC.samples --covar-number 1-
 
 
 
+#######################################
+#last updated: 20/09/2018
+
+#Om het wat overzichtelijker te maken probeer ik eerst even allemaal losse GWAS met ook de titel van de phenotypes in de #filename. 
+
+cd /groups/umcg-weersma/tmp04/Michiel/GSA-redo/phewas/plink_per_phenotype
+head binary.phenotypes.txt > binary.phenotypes.names -n1
+
+
+# Make separate binary phenotype files
+for i in {Colectomy,Stenosing,Penetrating,PeriAnallDisease,Ileocaecal_resection,Smoking_EN,Smoking_CE,Complications,EIM_arthropathy,EIM_arthritis,Pouchitis,A1,A2,A3,PerianalDisease,E1,E2,E3,Azathioprine,Mercaptopurine,Immunomodulator,Mesalazine,PSC,Appendectomy,Pouch,Stoma,Uveitis,Erythema,Pyoderma,OralAphthae,AnalFissura,Skin,Eyes,TromboticEvents,EIM_BMD};
+do plink --bfile tmp --pheno-name "$i" --pheno binary.phenotypes.txt --allow-no-sex --make-bed --out "$i"
+rm "$i".bed
+rm "$i".bim;
+done
+
+# Make separate quantitative phenotype files
+for i in {CD_Time_to_Surgery,UC_Time_to_Surgery,AgeDiagnosis,HBImean,SCCAImean,Height,ASAT,AF,ALAT,BSE,CRP,GGT,Ht,Leuco,MCV,Creat,Thrombos,Hb};
+do plink --bfile tmp --pheno-name "$i" --pheno quantitative.phenotypes.txt --allow-no-sex --make-bed --out "$i"
+rm "$i".bed
+rm "$i".bim;
+done
+
+# Generate genetic covariate file
+cp ../plinkanalyses/covariates.gen.txt .
+
+# Do association test per binary phenotype {26797.pts-27.calculon detached}
+for i in {Colectomy,Stenosing,Penetrating,PeriAnallDisease,Ileocaecal_resection,Smoking_EN,Smoking_CE,Complications,EIM_arthropathy,EIM_arthritis,Pouchitis,A1,A2,A3,PerianalDisease,E1,E2,E3,Azathioprine,Mercaptopurine,Immunomodulator,Mesalazine,PSC,Appendectomy,Pouch,Stoma,Uveitis,Erythema,Pyoderma,OralAphthae,AnalFissura,Skin,Eyes,TromboticEvents,EIM_BMD}; do
+plink --bed tmp.bed --bim tmp.bim --fam "$i".fam --logistic --covar covariates.gen.txt --covar-number 1-5 -out test --allow-no-sex;
+done
+
+# Do association testing per quantitative phenotype {48547.pts-27.calculon detached.}
+for i in {CD_Time_to_Surgery,UC_Time_to_Surgery,AgeDiagnosis,HBImean,SCCAImean,Height,ASAT,AF,ALAT,BSE,CRP,GGT,Ht,Leuco,MCV,Creat,Thrombos,Hb}; do
+plink --bed tmp.bed --bim tmp.bim --fam "$i".fam --linear --covar covariates.gen.txt --covar-number 1-5 -out test --allow-no-sex;
+done
 
 
 # for cox regression on survival
