@@ -74,7 +74,7 @@ plink --bfile tmp --covar covariates.gen.txt --keep UC.samples --covar-number 1-
 
 cd /groups/umcg-weersma/tmp04/Michiel/GSA-redo/phewas/plink_per_phenotype
 head binary.phenotypes.txt > binary.phenotypes.names -n1
-
+head quantitative.phenotypes.txt > quantitative.phenotypes.names -n1
 
 # Make separate binary phenotype files
 for i in {Colectomy,Stenosing,Penetrating,PeriAnallDisease,Ileocaecal_resection,Smoking_EN,Smoking_CE,Complications,EIM_arthropathy,EIM_arthritis,Pouchitis,A1,A2,A3,PerianalDisease,E1,E2,E3,Azathioprine,Mercaptopurine,Immunomodulator,Mesalazine,PSC,Appendectomy,Pouch,Stoma,Uveitis,Erythema,Pyoderma,OralAphthae,AnalFissura,Skin,Eyes,TromboticEvents,EIM_BMD};
@@ -93,14 +93,14 @@ done
 # Generate genetic covariate file
 cp ../plinkanalyses/covariates.gen.txt .
 
-# Do association test per binary phenotype {26797.pts-27.calculon detached}
+# Do association test per binary phenotype {1170.pts-27.calculon}
 for i in {Colectomy,Stenosing,Penetrating,PeriAnallDisease,Ileocaecal_resection,Smoking_EN,Smoking_CE,Complications,EIM_arthropathy,EIM_arthritis,Pouchitis,A1,A2,A3,PerianalDisease,E1,E2,E3,Azathioprine,Mercaptopurine,Immunomodulator,Mesalazine,PSC,Appendectomy,Pouch,Stoma,Uveitis,Erythema,Pyoderma,OralAphthae,AnalFissura,Skin,Eyes,TromboticEvents,EIM_BMD}; do
-plink --bed tmp.bed --bim tmp.bim --fam "$i".fam --logistic --covar covariates.gen.txt --covar-number 1-5 -out test --allow-no-sex;
+plink --bed tmp.bed --bim tmp.bim --fam "$i".fam --logistic --covar covariates.gen.txt --covar-number 1-5 -out "$i" --allow-no-sex;
 done
 
-# Do association testing per quantitative phenotype {48547.pts-27.calculon detached.}
+# Do association testing per quantitative phenotype {4313.pts-27.calculon}
 for i in {CD_Time_to_Surgery,UC_Time_to_Surgery,AgeDiagnosis,HBImean,SCCAImean,Height,ASAT,AF,ALAT,BSE,CRP,GGT,Ht,Leuco,MCV,Creat,Thrombos,Hb}; do
-plink --bed tmp.bed --bim tmp.bim --fam "$i".fam --linear --covar covariates.gen.txt --covar-number 1-5 -out test --allow-no-sex;
+plink --bed tmp.bed --bim tmp.bim --fam "$i".fam --linear --covar covariates.gen.txt --covar-number 1-5 -out "$i" --allow-no-sex;
 done
 
 
