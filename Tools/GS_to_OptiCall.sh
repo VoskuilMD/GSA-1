@@ -8,7 +8,7 @@
 
 ## USAGE ##
 
-# bash opticall_format_GSA_v2.sh -i $input -s 1 -a 23 -c 20 -x 19 -A 30 -B 31
+# bash GS_to_OptiCall.sh -i $input -s 1 -a 23 -c 20 -x 19 -A 30 -B 31
 # s => column containing snps name
 # a => column containing allele, p.e [A/G]
 # c => column containing snp position
