@@ -76,8 +76,22 @@ cd /groups/umcg-weersma/tmp04/Michiel/GSA-redo/phewas/plink_per_phenotype
 head binary.phenotypes.txt > binary.phenotypes.names -n1
 head quantitative.phenotypes.txt > quantitative.phenotypes.names -n1
 
+# update CHR:BP snp names to rsides using http://hgdownload.cse.ucsc.edu/goldenpath/hg19/database/snp150.txt.gz
+
+wget http://hgdownload.cse.ucsc.edu/goldenpath/hg19/database/snp150.txt.gz > All-snps.txt.gz
+
+zcat All-snps.txt.gz | sed 's/^.\{,3\}//' | awk 'OFS="\t"  {print $0, $1":"$2 }' | awk 'OFS="\t" {print $4,$3}' | gzip -9c > ChrBp_to_rsid.txt.gz
+
+# To update the plink files
+gunzip -9c ChrBp_to_rsid.txt.gz
+# Remove dupblicates first (that is, positions with multiple rsids -> we want to keep only bi-allelic sites)
+awk '{seen[$1]++; a[++count]=$0; key[count]=$1} END {for (i=1;i<=count;i++) if (seen[key[i]] == 1) print a[i]}' ChrBp_to_rsid.txt > ChrBp_to_rsid_unique.txt
+# Update map files
+plink --bfile tmp --update-map ChrBp_to_rsid_uniqe-update-name 
+
+
 # Make separate binary phenotype files
-for i in {Colectomy,Stenosing,Penetrating,PeriAnallDisease,Ileocaecal_resection,Smoking_EN,Smoking_CE,Complications,EIM_arthropathy,EIM_arthritis,Pouchitis,A1,A2,A3,PerianalDisease,E1,E2,E3,Azathioprine,Mercaptopurine,Immunomodulator,Mesalazine,PSC,Appendectomy,Pouch,Stoma,Uveitis,Erythema,Pyoderma,OralAphthae,AnalFissura,Skin,Eyes,TromboticEvents,EIM_BMD};
+for i in {Colectomy,Stenosing,Penetrating,PeriAnalDisease,Ileocaecal_resection,Smoking_EN,Smoking_CE,Complications,EIM_arthropathy,EIM_arthritis,Pouchitis,A1,A2,A3,PerianalDisease,E1,E2,E3,Azathioprine,Mercaptopurine,Immunomodulator,Mesalazine,PSC,Appendectomy,Pouch,Stoma,Uveitis,Erythema,Pyoderma,OralAphthae,AnalFissura,Skin,Eyes,TromboticEvents,EIM_BMD};
 do plink --bfile tmp --pheno-name "$i" --pheno binary.phenotypes.txt --allow-no-sex --make-bed --out "$i"
 rm "$i".bed
 rm "$i".bim;
@@ -93,15 +107,48 @@ done
 # Generate genetic covariate file
 cp ../plinkanalyses/covariates.gen.txt .
 
-# Do association test per binary phenotype {1170.pts-27.calculon}
-for i in {Colectomy,Stenosing,Penetrating,PeriAnallDisease,Ileocaecal_resection,Smoking_EN,Smoking_CE,Complications,EIM_arthropathy,EIM_arthritis,Pouchitis,A1,A2,A3,PerianalDisease,E1,E2,E3,Azathioprine,Mercaptopurine,Immunomodulator,Mesalazine,PSC,Appendectomy,Pouch,Stoma,Uveitis,Erythema,Pyoderma,OralAphthae,AnalFissura,Skin,Eyes,TromboticEvents,EIM_BMD}; do
+# Do association test per binary phenotype 
+for i in {Colectomy,Stenosing,Penetrating,PeriAnalDisease,Ileocaecal_resection,Smoking_EN,Smoking_CE,Complications,EIM_arthropathy,EIM_arthritis,Pouchitis,A1,A2,A3,PerianalDisease,E1,E2,E3,Azathioprine,Mercaptopurine,Immunomodulator,Mesalazine,PSC,Appendectomy,Pouch,Stoma,Uveitis,Erythema,Pyoderma,OralAphthae,AnalFissura,Skin,Eyes,TromboticEvents,EIM_BMD}; do
 plink --bed tmp.bed --bim tmp.bim --fam "$i".fam --logistic --covar covariates.gen.txt --covar-number 1-5 -out "$i" --allow-no-sex;
 done
 
-# Do association testing per quantitative phenotype {4313.pts-27.calculon}
+# Do association testing per quantitative phenotype 
 for i in {CD_Time_to_Surgery,UC_Time_to_Surgery,AgeDiagnosis,HBImean,SCCAImean,Height,ASAT,AF,ALAT,BSE,CRP,GGT,Ht,Leuco,MCV,Creat,Thrombos,Hb}; do
 plink --bed tmp.bed --bim tmp.bim --fam "$i".fam --linear --covar covariates.gen.txt --covar-number 1-5 -out "$i" --allow-no-sex;
 done
+
+# Select only additive results from .assoc.{logistic,linear} and disregard PC1-5 assoc results
+# I have removed NA's here from the results as well. 
+
+for i in {Colectomy,Stenosing,Penetrating,PeriAnalDisease,Ileocaecal_resection,Smoking_EN,Smoking_CE,Complications,EIM_arthropathy,EIM_arthritis,Pouchitis,A1,A2,A3,E1,E2,E3,Azathioprine,Mercaptopurine,Immunomodulator,Mesalazine,PSC,Appendectomy,Pouch,Stoma,Uveitis,Erythema,Pyoderma,OralAphthae,AnalFissura,Skin,Eyes,TromboticEvents,EIM_BMD};
+do awk '(($5 == "ADD" || $5 == "TEST") && $9!="NA")' "$i".assoc.logistic > "$i".assoc.logistic_tmp1
+sort -gk9 "$i".assoc.logistic_tmp1 > "$i".assoc.logistic_tmp2
+cp *_tmp2 filtered_results; 
+done
+
+for i in {CD_Time_to_Surgery,UC_Time_to_Surgery,AgeDiagnosis,HBImean,SCCAImean,Height,ASAT,AF,ALAT,BSE,CRP,GGT,Ht,Leuco,MCV,Creat,Thrombos,Hb};
+do awk '(($5 == "ADD" || $5 == "TEST") && $9!="NA")' "$i".assoc.linear > "$i".assoc.linear_tmp1
+sort -gk9 "$i".assoc.linear_tmp1 > "$i".assoc.linear_tmp2
+cp *_tmp2 filtered_results; 
+done
+
+bash create_manhattan.sh
+bash create_manhattan_rscripts.sh
+
+for i in {Colectomy,Stenosing,Penetrating,PeriAnalDisease,Ileocaecal_resection,Smoking_EN,Smoking_CE,Complications,EIM_arthropathy,EIM_arthritis,Pouchitis,A1,A2,A3,E1,E2,E3,Azathioprine,Mercaptopurine,Immunomodulator,Mesalazine,PSC,Appendectomy,Pouch,Stoma,Uveitis,Erythema,Pyoderma,OralAphthae,AnalFissura,Skin,Eyes,TromboticEvents,EIM_BMD};
+do sbatch Manhattan_"$i".sh; done
+
+for i in {CD_Time_to_Surgery,UC_Time_to_Surgery,AgeDiagnosis,HBImean,SCCAImean,Height,ASAT,AF,ALAT,BSE,CRP,GGT,Leuco,MCV,Creat,Thrombos,Hb};
+do sbatch Manhattan_"$i".sh; done
+
+
+# For some reason Ht doesn't yield results. Have checked the reason yet though
+
+
+# about results
+
+Good way to visualize Manhattan way: https://www.r-graph-gallery.com/wp-content/uploads/2018/02/Manhattan_plot_in_R.html 
+
 
 
 # for cox regression on survival
