@@ -1,6 +1,6 @@
 # Author: Michiel Voskuil 
 
-# Date: 2017/11/15
+# Date: 2018/10/01
 
 
 1. Do phewas first manually. That is: perform several GWAS's for all different phenotypes and see whether results correlate well. Step 1: prepare genotype files:
@@ -109,7 +109,7 @@ do sbatch Manhattan_"$i".sh; done
 
 
 Step (extra): to do
---------------------
+---------------------------------------------------
 ```
 #For some reason Ht doesn't yield results. Have checked the reason yet though
 
@@ -124,7 +124,7 @@ https://www.liverpool.ac.uk/translational-medicine/research/statistical-genetics
 
 
 deprecated
------------------
+---------------------------------------------------
 ```
 # binary
 awk 'BEGIN {OFS = "\t"} { print $1,$2,$3,$4,$5,$6,$7,$10,$11,$12,$13,$14,$15,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$34,$35,$36,$37,$38,$39,$40,$41,$42}' phenotypes.raw.txt > binary.phenotypes.txt
