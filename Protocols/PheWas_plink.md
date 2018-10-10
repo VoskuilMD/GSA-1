@@ -42,8 +42,16 @@ awk -F"\t" '$3 == "FALSE" { print $1"\t"$2 }' covariates.diag.gen.txt > UC.sampl
 wget http://hgdownload.cse.ucsc.edu/goldenpath/hg19/database/snp150.txt.gz > snp150.txt.gz 
 zcat snp150.txt.gz | awk 'OFS="\t" {print $2,$4,$5}' | sed 's/^.\{,3\}//' | awk 'OFS="\t" {print $1 ":" $2,$3}' > rsid.list
 
-# remove duplicate sites (tri-allelic), plink only handles bi-allelic sites
+# remove duplicate sites (tri-allelic), plink only handles bi-allelic sites [this takes about 23 minutes]
 awk '{seen[$1]++; a[++count]=$0; key[count]=$1} END {for (i=1;i<=count;i++) if (seen[key[i]] == 1) print a[i]}' rsid.list > rsid.list2
+rm rsid.list
+mv rsid.list2 rsid.list
+
+# Update map files
+ml plink
+plink --bfile tmp --update-name rsid.list --make-bed --out tmp
+
+
 ```
 
 2. Step 2: prepare phenotype files:
@@ -53,7 +61,7 @@ head binary.phenotypes.txt > binary.phenotypes.names -n1
 head quantitative.phenotypes.txt > quantitative.phenotypes.names -n1
 
 # Make separate binary phenotype files
-for i in {Colectomy,Stenosing,Penetrating,PeriAnalDisease,Ileocaecal_resection,Smoking_EN,Smoking_CE,Complications,EIM_arthropathy,EIM_arthritis,Pouchitis,A1,A2,A3,PerianalDisease,E1,E2,E3,Azathioprine,Mercaptopurine,Immunomodulator,Mesalazine,PSC,Appendectomy,Pouch,Stoma,Uveitis,Erythema,Pyoderma,OralAphthae,AnalFissura,Skin,Eyes,TromboticEvents,EIM_BMD};
+for i in {Colectomy,Stenosing,Penetrating,PeriAnalDisease,Ileocaecal_resection,Smoking_EN,Smoking_CE,Complications,EIM_arthropathy,EIM_arthritis,Pouchitis,A1,A2,A3,E1,E2,E3,Azathioprine,Mercaptopurine,Immunomodulator,Mesalazine,PSC,Appendectomy,Pouch,Stoma,Uveitis,Erythema,Pyoderma,OralAphthae,AnalFissura,Skin,Eyes,TromboticEvents,EIM_BMD};
 do plink --bfile tmp --pheno-name "$i" --pheno binary.phenotypes.txt --allow-no-sex --make-bed --out "$i"
 rm "$i".bed
 rm "$i".bim;
@@ -71,7 +79,7 @@ Step 3: do GWAS's
 ---------------------------------------------------
 ```
 # Do association test per binary phenotype 
-for i in {Colectomy,Stenosing,Penetrating,PeriAnalDisease,Ileocaecal_resection,Smoking_EN,Smoking_CE,Complications,EIM_arthropathy,EIM_arthritis,Pouchitis,A1,A2,A3,PerianalDisease,E1,E2,E3,Azathioprine,Mercaptopurine,Immunomodulator,Mesalazine,PSC,Appendectomy,Pouch,Stoma,Uveitis,Erythema,Pyoderma,OralAphthae,AnalFissura,Skin,Eyes,TromboticEvents,EIM_BMD}; do
+for i in {Colectomy,Stenosing,Penetrating,PeriAnalDisease,Ileocaecal_resection,Smoking_EN,Smoking_CE,Complications,EIM_arthropathy,EIM_arthritis,Pouchitis,A1,A2,A3,E1,E2,E3,Azathioprine,Mercaptopurine,Immunomodulator,Mesalazine,PSC,Appendectomy,Pouch,Stoma,Uveitis,Erythema,Pyoderma,OralAphthae,AnalFissura,Skin,Eyes,TromboticEvents,EIM_BMD}; do
 plink --bed tmp.bed --bim tmp.bim --fam "$i".fam --logistic --covar covariates.gen.txt --covar-number 1-5 -out "$i" --allow-no-sex;
 done
 
@@ -87,13 +95,13 @@ Step 4: analyse results: select only additive results from .assoc.{logistic,line
 for i in {Colectomy,Stenosing,Penetrating,PeriAnalDisease,Ileocaecal_resection,Smoking_EN,Smoking_CE,Complications,EIM_arthropathy,EIM_arthritis,Pouchitis,A1,A2,A3,E1,E2,E3,Azathioprine,Mercaptopurine,Immunomodulator,Mesalazine,PSC,Appendectomy,Pouch,Stoma,Uveitis,Erythema,Pyoderma,OralAphthae,AnalFissura,Skin,Eyes,TromboticEvents,EIM_BMD};
 do awk '(($5 == "ADD" || $5 == "TEST") && $9!="NA")' "$i".assoc.logistic > "$i".assoc.logistic_tmp1
 sort -gk9 "$i".assoc.logistic_tmp1 > "$i".assoc.logistic_tmp2
-cp *_tmp2 filtered_results; 
+cp *_tmp2 filtered_results_run_2; 
 done
 
 for i in {CD_Time_to_Surgery,UC_Time_to_Surgery,AgeDiagnosis,HBImean,SCCAImean,Height,ASAT,AF,ALAT,BSE,CRP,GGT,Ht,Leuco,MCV,Creat,Thrombos,Hb};
 do awk '(($5 == "ADD" || $5 == "TEST") && $9!="NA")' "$i".assoc.linear > "$i".assoc.linear_tmp1
 sort -gk9 "$i".assoc.linear_tmp1 > "$i".assoc.linear_tmp2
-cp *_tmp2 filtered_results; 
+cp *_tmp2 filtered_results_run_2; 
 done
 
 bash create_manhattan.sh
