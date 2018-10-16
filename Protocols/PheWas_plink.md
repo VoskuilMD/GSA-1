@@ -39,7 +39,7 @@ awk -F"\t" '$3 == "TRUE" { print $1"\t"$2 }' covariates.diag.gen.txt > CD.sample
 awk -F"\t" '$3 == "FALSE" { print $1"\t"$2 }' covariates.diag.gen.txt > UC.samples
 
 #update CHR:BP snp names to rsides using http://hgdownload.cse.ucsc.edu/goldenpath/hg19/database/snp150.txt.gz
-wget http://hgdownload.cse.ucsc.edu/goldenpath/hg19/database/snp150.txt.gz > snp150.txt.gz 
+wget http://hgdownload.cse.ucsc.edu/goldenPath/hg38/database/snp150.txt.gz
 zcat snp150.txt.gz | awk 'OFS="\t" {print $2,$4,$5}' | sed 's/^.\{,3\}//' | awk 'OFS="\t" {print $1 ":" $2,$3}' > rsid.list
 
 # remove duplicate sites (tri-allelic), plink only handles bi-allelic sites [this takes about 23 minutes]
