@@ -645,7 +645,7 @@ for i in {european,admixed};
 ---------------------------
 
 We will now filter the results based on INFO score (> 0.3) and MAF (>0.001). We make use of the scripts provided by Raul:
-filterAndAnnotateMichigan_GRCh37.sh.sh   / filterAndAnnotateMichigan.job  / michiganReheading.R. We will annotate using the db150 release.q
+filterAndAnnotateMichigan_GRCh37.sh.sh   / filterAndAnnotateMichigan.job  / michiganReheading.R. 
 
 ```
 # Adjust the .sh script with the desired directories. Adjust the .job script with the desired tresholds for filtering and the location of the .R script. Make sure you have one folder per chromosome as the input: see example in /Tools folder
