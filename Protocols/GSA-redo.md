@@ -664,19 +664,43 @@ Once these jobs have finished we will transfer all vcf.gz files into binary plin
 for i in {1..22}; do sbatch $RUNDIR/scripts/imputedVCFtoPlinkS_"$i".sh; done
 
 # When finished, remove multi-allelic sites
+
 mkdir $RUNDIR/imputation/european/results/european_GRCh37_maf0001/plinkfiles_biallelic/
-for i in {1..22}; do \
-	plink $RUNDIR/imputation/european/results/european_GRCh37_maf0001/plinkfiles/GSA_chr_"$i" --biallelic-only strict --make-bed --allow-no-sex --out $RUNDIR/imputation/european/results/european_GRCh37_maf0001/plinkfiles_biallelic/GSA_chr_"$i"_biallelic; \
-	done
+cd $RUNDIR/imputation/european/results/european_GRCh37_maf0001/plinkfiles_biallelic/
+for i in {1..22}; do awk 'n=x[$4]{print n"\n"$0;} {x[$4]=$0;}' /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_maf0001/plinkfiles/GSA_chr_"$i".bim > chr_"$i".tmp; done 
+for i in {1..22}; do awk '{print $2}' chr_"$i".tmp > chr_"$i".multiallelic; done
+for i in {1..22}; do plink --bfile /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_maf0001/plinkfiles/GSA_chr_"$i" --exclude chr_"$i".multiallelic --make-bed --out GSA_chr_"$i"_biallelic --allow-no-sex; done
+rm *.tmp
 ```
+
+Merge all chromosomal plink files into one:
+```
+mkdir /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_maf0001/mergedplinkfiles
+cd /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_maf0001/mergedplinkfiles
+
+ls /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_maf0001/plinkfiles_biallelic/*.bed > bed.txt
+ls /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_maf0001/plinkfiles_biallelic/*.bim > bim.txt
+ls /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_maf0001/plinkfiles_biallelic/*.fam > fam.txt
+
+paste bed.txt bim.txt fam.txt | column -s $'\t' -t > merge.list
+
+# Manually remove chr 1 from this merge.list fileml V
+
+plink --bfile /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_maf0001/plinkfiles_biallelic/GSA_chr_1_biallelic \
+--merge-list merge.list \
+--make-bed \
+--out GSA_chr_1-22
+
+echo "Finished concatenating all chromosome for GSA cohort"
 
 
 You could also l concatenate all chromosome vcfs into one large filtered and annotated VCF to do association testing.
 
 ```
-# Merge all chromosomes into one file
-# Example
-vcf-concat ../annotated/chr_1/chr_1_annotated.vcf.gz ../annotated/chr_2/chr_2_annotated.vcf.gz ../annotated/chr_3/chr_3_annotated.vcf.gz ../annotated/chr_4/chr_4_annotated.vcf.gz ../annotated/chr_5/chr_5_annotated.vcf.gz ../annotated/chr_6/chr_6_annotated.vcf.gz ../annotated/chr_7/chr_7_annotated.vcf.gz ../annotated/chr_8/chr_8_annotated.vcf.gz ../annotated/chr_9/chr_9_annotated.vcf.gz ../annotated/chr_10/chr_10_annotated.vcf.gz ../annotated/chr_11/chr_11_annotated.vcf.gz ../annotated/chr_12/chr_12_annotated.vcf.gz ../annotated/chr_13/chr_13_annotated.vcf.gz ../annotated/chr_14/chr_14_annotated.vcf.gz ../annotated/chr_15/chr_15_annotated.vcf.gz ../annotated/chr_16/chr_16_annotated.vcf.gz ../annotated/chr_17/chr_17_annotated.vcf.gz ../annotated/chr_18/chr_18_annotated.vcf.gz ../annotated/chr_19/chr_19_annotated.vcf.gz ../annotated/chr_20/chr_20_annotated.vcf.gz ../annotated/chr_21/chr_21_annotated.vcf.gz ../annotated/chr_22/chr_22_annotated.vcf.gz| gzip -c > admixed_maf001.vcf.gz
+Merge all chromosomes into one file
+```
+This takes several hours, suggest to use screen mode
+vcf-concat ../annotated/chr_1/chr_1_annotated.vcf.gz ../annotated/chr_2/chr_2_annotated.vcf.gz ../annotated/chr_3/chr_3_annotated.vcf.gz ../annotated/chr_4/chr_4_annotated.vcf.gz ../annotated/chr_5/chr_5_annotated.vcf.gz ../annotated/chr_6/chr_6_annotated.vcf.gz ../annotated/chr_7/chr_7_annotated.vcf.gz ../annotated/chr_8/chr_8_annotated.vcf.gz ../annotated/chr_9/chr_9_annotated.vcf.gz ../annotated/chr_10/chr_10_annotated.vcf.gz ../annotated/chr_11/chr_11_annotated.vcf.gz ../annotated/chr_12/chr_12_annotated.vcf.gz ../annotated/chr_13/chr_13_annotated.vcf.gz ../annotated/chr_14/chr_14_annotated.vcf.gz ../annotated/chr_15/chr_15_annotated.vcf.gz ../annotated/chr_16/chr_16_annotated.vcf.gz ../annotated/chr_17/chr_17_annotated.vcf.gz ../annotated/chr_18/chr_18_annotated.vcf.gz ../annotated/chr_19/chr_19_annotated.vcf.gz ../annotated/chr_20/chr_20_annotated.vcf.gz ../annotated/chr_21/chr_21_annotated.vcf.gz ../annotated/chr_22/chr_22_annotated.vcf.gz| gzip -c > european_GRCh37_maf0001.vcf.gz
 ```
 
 
