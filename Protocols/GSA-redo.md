@@ -644,12 +644,13 @@ for i in {european,admixed};
 11. Filter, annotate and merge imputed VCFs
 ---------------------------
 
-We will now filter the results based on INFO score (> 0.3) and MAF (>0.001). We make use of the scripts provided by Raul:
+We will now filter the results based on INFO score (> 0.4) and MAF (>0.001). We make use of the scripts provided by Raul:
 filterAndAnnotateMichigan_GRCh37.sh.sh   / filterAndAnnotateMichigan.job  / michiganReheading.R. 
 
 ```
 # Adjust the .sh script with the desired directories. Adjust the .job script with the desired tresholds for filtering and the location of the .R script. Make sure you have one folder per chromosome as the input: see example in /Tools folder
-As annotation file make sure you have the GRCh37 build: "/groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/annotation/00-All.vcf.gz"
+As annotation file make sure you have the GRCh37 build: "/groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/annotation/00-All.vcf.gz" 
+# Actually using this script I filter for INFO >0.3 but later we do > 0.4
 
 bash filterAndAnnotateMichigan.sh
 
@@ -658,6 +659,8 @@ Once these jobs have finished we will transfer all vcf.gz files into binary plin
 
 ```
 # We will make use of the script /Tools/imputedVCFtoPlinkS.sh. I suggest to run these in parallel. 
+# Here we filter for INFO > 0.4 since this is default for Genotype Harmonizer
+
 for i in {1..22}; do sbatch $RUNDIR/scripts/imputedVCFtoPlinkS_"$i".sh; done
 
 # When finished, remove multi-allelic sites
