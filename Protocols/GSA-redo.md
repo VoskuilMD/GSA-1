@@ -644,16 +644,31 @@ for i in {european,admixed};
 11. Filter, annotate and merge imputed VCFs
 ---------------------------
 
-We will now filter the results based on INFO score (> 0.2) and MAF (>0.01). We make use of the scripts provided by Raul:
-filterAndAnnotateMichigan.sh   / filterAndAnnotateMichigan.job  / michiganReheading.R. We will annotate using the db150 release.
+We will now filter the results based on INFO score (> 0.3) and MAF (>0.001). We make use of the scripts provided by Raul:
+filterAndAnnotateMichigan_GRCh37.sh.sh   / filterAndAnnotateMichigan.job  / michiganReheading.R. We will annotate using the db150 release.q
 
 ```
 # Adjust the .sh script with the desired directories. Adjust the .job script with the desired tresholds for filtering and the location of the .R script. Make sure you have one folder per chromosome as the input: see example in /Tools folder
+As annotation file make sure you have the GRCh37 build: "/groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/annotation/00-All.vcf.gz"
 
 bash filterAndAnnotateMichigan.sh
 
 ```
-Once these jobs have fininshed we will concatenate all chromosome vcfs into one large filtered and annotated VCF to do association testing.
+Once these jobs have finished we will transfer all vcf.gz files into binary plink files and only keep bi-allelic sites since plink cannot handle multi-allelic (>2) sites properly.
+
+```
+# We will make use of the script /Tools/imputedVCFtoPlinkS.sh. I suggest to run these in parallel. 
+for i in {1..22}; do sbatch $RUNDIR/scripts/imputedVCFtoPlinkS_"$i".sh; done
+
+# When finished, remove multi-allelic sites
+mkdir $RUNDIR/imputation/european/results/european_GRCh37_maf0001/plinkfiles_biallelic/
+for i in {1..22}; do \
+	plink $RUNDIR/imputation/european/results/european_GRCh37_maf0001/plinkfiles/GSA_chr_"$i" --biallelic-only strict --make-bed --allow-no-sex --out $RUNDIR/imputation/european/results/european_GRCh37_maf0001/plinkfiles_biallelic/GSA_chr_"$i"_biallelic; \
+	done
+```
+
+
+You could also l concatenate all chromosome vcfs into one large filtered and annotated VCF to do association testing.
 
 ```
 # Merge all chromosomes into one file
