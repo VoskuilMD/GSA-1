@@ -11,8 +11,8 @@ module load GenotypeHarmonizer
 module load plink
 
 cohort="GSA"
-input="/groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_maf001/annotated/"
-output="/groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_maf001/annotated/plinkfiles"
+input="/groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_maf0001/annotated/"
+output="/groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_maf0001/annotated/plinkfiles"
 
 mkdir -p $output
 
@@ -30,7 +30,7 @@ done
 echo "Finished converting VCF files into Plink BED files from ${cohort} cohort"
 
 
-mergedOutPut="/groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_maf001/annotated/mergedPlink/"
+mergedOutPut="/groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_maf0001/annotated/mergedPlink/"
 
 
 mkdir -p $mergedOutPut
