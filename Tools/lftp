@@ -1,0 +1,5 @@
+# When you want to log on to our cher-ami server to share data
+ssh -A foyer+calculon
+lftp
+open -u umcg-guest05,none -p 22 sftp://cher-ami.hpc.rug.nl
+ls
