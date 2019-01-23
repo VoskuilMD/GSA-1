@@ -659,7 +659,6 @@ Once these jobs have finished we will transfer all vcf.gz files into binary plin
 
 ```
 # We will make use of the script /Tools/imputedVCFtoPlinkS.sh. I suggest to run these in parallel. 
-# Here we filter for INFO > 0.4 since this is default for Genotype Harmonizer
 
 for i in {1..22}; do sbatch $RUNDIR/scripts/imputedVCFtoPlinkS_"$i".sh; done
 
