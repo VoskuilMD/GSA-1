@@ -21,5 +21,5 @@ echo "module load tabix " >> chr"$i"_vcftoplink.sh
 
 echo "mkdir -p /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_noMAF_noR2_filters_3/plinkfiles/" >> chr"$i"_vcftoplink.sh
 
-echo "GenotypeHarmonizer.sh -i /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_noMAF_noR2_filters_3/filtered/chr_${i} -I VCFFOLDER -o /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_noMAF_noR2_filters_2/plinkfiles/GSA_chr_${i} -O PLINK_BED -mrf 0.3" >> chr"$i"_vcftoplink.sh;
+echo "GenotypeHarmonizer.sh -i /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_noMAF_noR2_filters_3/annotated/chr_${i} -I VCFFOLDER -o /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_noMAF_noR2_filters_3/plinkfiles/GSA_chr_${i} -O PLINK_BED -mrf 0.3" >> chr"$i"_vcftoplink.sh;
 done
