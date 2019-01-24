@@ -14,20 +14,12 @@ echo "#SBATCH --error=chr"$i"_vcftoplink.err" >> chr"$i"_vcftoplink.sh
 
 echo "module load plink" >> chr"$i"_vcftoplink.sh
 echo "module load GenotypeHarmonizer" >> chr"$i"_vcftoplink.sh
-echo "module tabix " >> chr"$i"_vcftoplink.sh
+echo "module load tabix " >> chr"$i"_vcftoplink.sh
 
 
-# Set directory name for output 
+# Set directory name for, input, output and r2 filter 
 
 echo "mkdir -p /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_noMAF_noR2_filters_3/plinkfiles/" >> chr"$i"_vcftoplink.sh
 
-echo "GenotypeHarmonizer.sh \ " >> chr"$i"_vcftoplink.sh
-
-# Set directories for input and output and r2 filter (-mrf)
-
-echo "-i /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_noMAF_noR2_filters_3/filtered/chr_${i} \ " >> chr"$i"_vcftoplink.sh
-echo "-I VCFFOLDER \ " >> chr"$i"_vcftoplink.sh
-echo "-o /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_noMAF_noR2_filters_2/plinkfiles/GSA_chr_${i} \ " >> chr"$i"_vcftoplink.sh
-echo "-O PLINK_BED \ " >> chr"$i"_vcftoplink.sh
-echo "-mrf 0.3" >> chr"$i"_vcftoplink.sh;
+echo "GenotypeHarmonizer.sh -i /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_noMAF_noR2_filters_3/filtered/chr_${i} -I VCFFOLDER -o /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_noMAF_noR2_filters_2/plinkfiles/GSA_chr_${i} -O PLINK_BED -mrf 0.3" >> chr"$i"_vcftoplink.sh;
 done
