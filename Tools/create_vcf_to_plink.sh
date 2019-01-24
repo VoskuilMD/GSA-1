@@ -1,5 +1,4 @@
-# Script for 
-
+# Script for converting imputed VCFs to plink files
 
 #!/bin/bash
 
@@ -24,10 +23,11 @@ echo "mkdir -p /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/r
 
 echo "GenotypeHarmonizer.sh \ " >> chr"$i"_vcftoplink.sh
 
-# Set directories for input and ouput 
+# Set directories for input and output and r2 filter (-mrf)
 
 echo "-i /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_noMAF_noR2_filters_3/filtered/chr_${i} \ " >> chr"$i"_vcftoplink.sh
 echo "-I VCFFOLDER \ " >> chr"$i"_vcftoplink.sh
 echo "-o /groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/european/results/european_GRCh37_noMAF_noR2_filters_2/plinkfiles/GSA_chr_${i} \ " >> chr"$i"_vcftoplink.sh
-echo "-O PLINK_BED " >> chr"$i"_vcftoplink.sh;
+echo "-O PLINK_BED \ " >> chr"$i"_vcftoplink.sh
+echo "-mrf 0.3" >> chr"$i"_vcftoplink.sh;
 done
