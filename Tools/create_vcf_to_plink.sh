@@ -7,7 +7,7 @@ do
 echo "#!/bin/bash" >> chr"$i"_vcftoplink.sh
 echo "#SBATCH --job-name=chr"$i".vcftoplink" >> chr"$i"_vcftoplink.sh
 echo "#SBATCH --mem 5gb" >> chr"$i"_vcftoplink.sh
-echo "#SBATCH --time=4:00:00" >> chr"$i"_vcftoplink.sh
+echo "#SBATCH --time=9:00:00" >> chr"$i"_vcftoplink.sh
 echo "#SBATCH --nodes 1" >> chr"$i"_vcftoplink.sh
 echo "#SBATCH --output=chr"$i"_vcftoplink.out" >> chr"$i"_vcftoplink.sh
 echo "#SBATCH --error=chr"$i"_vcftoplink.err" >> chr"$i"_vcftoplink.sh
