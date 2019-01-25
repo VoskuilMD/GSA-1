@@ -21,7 +21,7 @@ do
 	echo '#SBATCH --export=NONE' >> ${TEMP_DIR}/chr${chr}.sh
 	echo ml shapeit >> ${TEMP_DIR}/chr${chr}.sh
 	echo shapeit \
-        -B ${BED_DIR}/GSA_chr_${chr}_biallelic.bed \
+        -B ${BED_DIR}/GSA_chr_${chr}_biallelic \
         -M ${GENETIC_MAP_DIR}genetic_map_chr${chr}_combined_b37.txt \
         --input-ref ${REF_DIR}chr${chr}.hap.gz \
         -O ${OUTPUT_DIR}/chr_${chr} \
