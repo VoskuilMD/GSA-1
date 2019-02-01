@@ -32,7 +32,26 @@ Fortunately, PRSice does this automagically. See log file: "10 ambiguous variant
 awk '{print $2}' TEMP.snp > Lui_Sommeren_loci_non_amb.txt 
 plink --bfile GIEQ.Lui.loci --extract Lui_Sommeren_loci_non_amb.txt --make-bed --out GIEQ.Lui.loci.non.amb --allow-no-sex
 
+# For these 213 I have checked manually whether the A1 .assoc allele corresponds with the A1 .bim allele. Please see excel: /GIEQ/GIEQ.snps.flips.xlsx
+# I have used the .bim file as a lead. I.e. when A1.bim was A2.assoc, I converted the beta into the other direction. (similar to 1/OR).
+# I have uploaded this info into the file GIEQ.snps.flips
 
+awk '{print $1,$7,$8,$9,$10}' GIEQ.snps.flips > tmp
+sed -e 's/ [ ]*/\t/g' tmp > snp.effectsizes
+rm tmp
+
+# Now we are going to convert the binary plink files to an "additive (0/1/2) component file"
+plink --bfile GIEQ.Lui.loci.non.amb --recode A --out GIEQ.Lui.loci.non.amb.switch --allow-no-sex 
+
+# A1 alleles are now counted and in the GIEQ.Lui.loci.non.amb.raw file.
+
+
+#Alternatively, we can also keep the orignal beta's and or's from the Lui paper. In this case, we have to count the .assoc A1 alleles in the plink files
+# For this we use the recode-allele file
+plink --bfile  GIEQ.Lui.loci.non.amb --recode A --recode-allele recode.allels.according.to.base --out GIEQ.Lui.loci.non.amb.original
+
+# as you can see, the snp.effectsizes files has corresponding BETA's/OR's for both the .switch and the .original genetic data. 
+# Please check whether PRS scores will be the same eventually. 
 
 
 
