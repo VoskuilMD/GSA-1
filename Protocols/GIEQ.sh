@@ -30,28 +30,52 @@ Fortunately, PRSice does this automagically. See log file: "10 ambiguous variant
 
 # We will only include the 213 clumped non-ambigious variants
 awk '{print $2}' TEMP.snp > Lui_Sommeren_loci_non_amb.txt 
+
+# We will manually add the NOD2:rs2066845 (flip), rs1505992(nonflip), rs7746082 (nonflip) here, since this is an ambigious snp but I have checked for strands
+echo 'rs2066845' >> Lui_Sommeren_loci_non_amb.txt
+echo 'rs1505992' >> Lui_Sommeren_loci_non_amb.txt
+echo 'rs7746082' >> Lui_Sommeren_loci_non_amb.txt
 plink --bfile GIEQ.Lui.loci --extract Lui_Sommeren_loci_non_amb.txt --make-bed --out GIEQ.Lui.loci.non.amb --allow-no-sex
 
-# For these 213 I have checked manually whether the A1 .assoc allele corresponds with the A1 .bim allele. Please see excel: /GIEQ/GIEQ.snps.flips.xlsx
+# For these 216 I have checked manually whether the A1 .assoc allele corresponds with the A1 .bim allele. Please see excel: /GIEQ/GIEQ.snps.flips.xlsx
 # I have used the .bim file as a lead. I.e. when A1.bim was A2.assoc, I converted the beta into the other direction. (similar to 1/OR).
 # I have uploaded this info into the file GIEQ.snps.flips
 
-awk '{print $1,$7,$8,$9,$10}' GIEQ.snps.flips > tmp
+awk '{print $1,$7,$9}' GIEQ.snps.flips > tmp
 sed -e 's/ [ ]*/\t/g' tmp > snp.effectsizes
 rm tmp
 
+#Deprecated
 # Now we are going to convert the binary plink files to an "additive (0/1/2) component file"
-plink --bfile GIEQ.Lui.loci.non.amb --recode A --out GIEQ.Lui.loci.non.amb.switch --allow-no-sex 
+#plink --bfile GIEQ.Lui.loci.non.amb --recode A --out GIEQ.Lui.loci.non.amb.switch --allow-no-sex 
 
 # A1 alleles are now counted and in the GIEQ.Lui.loci.non.amb.raw file.
 
-
+# This is what we actually do!!
 #Alternatively, we can also keep the orignal beta's and or's from the Lui paper. In this case, we have to count the .assoc A1 alleles in the plink files
 # For this we use the recode-allele file
+# Upload the file: recode.allels.according.to.base
 plink --bfile  GIEQ.Lui.loci.non.amb --recode A --recode-allele recode.allels.according.to.base --out GIEQ.Lui.loci.non.amb.original
 
 # as you can see, the snp.effectsizes files has corresponding BETA's/OR's for both the .switch and the .original genetic data. 
-# Please check whether PRS scores will be the same eventually. 
+# Please check whether PRS scores will be the same eventually -> they are not, so stick with .original. 
+
+# IN Rstudio:
+
+#switch.raw = read.table("~/Documents/Werk/Promotie/GIEQ/GIEQ.Lui.loci.non.amb.switch.raw", header = F)
+original.raw = read.table("~/Documents/Werk/Promotie/GIEQ/GIEQ.Lui.loci.non.amb.original.raw", header = F)
+#switch.raw = switch.raw[,c(-1,-3,-4,-5,-6)]
+original.raw = original.raw[,c(-1,-3,-4,-5,-6)]
+#switch = as.data.frame(t(switch.raw))
+original = as.data.frame(t(original.raw))
+
+#names(switch) <- as.matrix(switch[1, ])
+#switch <- switch[-1, ]
+#switch[] <- lapply(switch, function(x) type.convert(as.character(x)))
+
+names(original) <- as.matrix(original[1, ])
+original <- original[-1, ]
+original[] <- lapply(original, function(x) type.convert(as.character(x)))
 
 
 
