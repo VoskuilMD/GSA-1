@@ -55,7 +55,7 @@ rm tmp
 #Alternatively, we can also keep the orignal beta's and or's from the Lui paper. In this case, we have to count the .assoc A1 alleles in the plink files
 # For this we use the recode-allele file
 # Upload the file: recode.allels.according.to.base
-plink --bfile  GIEQ.Lui.loci.non.amb --recode A --recode-allele recode.allels.according.to.base --out GIEQ.Lui.loci.non.amb.original
+plink --bfile  GIEQ.Lui.loci.non.amb --recode A --recode-allele recode.allels.according.to.base --out GIEQ.Lui.loci.non.amb.original --update-ids couplingfile.GSA.GIEQ
 
 # as you can see, the snp.effectsizes files has corresponding BETA's/OR's for both the .switch and the .original genetic data. 
 # Please check whether PRS scores will be the same eventually -> they are not, so stick with .original. 
