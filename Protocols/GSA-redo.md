@@ -627,7 +627,7 @@ for i in {1..22}; do
 mkdir $RUNDIR/imputation/admixed/ICoutput
 mkdir $RUNDIR/imputation/european/results/postimputation
 for i in {1..22}; do
-	mv $RUNDIR/scripts/european_chr"$i"/chr"$i".dose.vcf.cut.gz $RUNDIR/imputation/european/results/postimpution;
+	mv $RUNDIR/scripts/european_chr"$i"/chr"$i".dose.vcf.cut.gz $RUNDIR/imputation/european/results/postimputation;
 	done	
 mkdir $RUNDIR/imputation/european/ICoutput
 
