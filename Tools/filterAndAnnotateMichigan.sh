@@ -2,7 +2,7 @@
 
 vcfFolder="/groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/admixed/results/test/"
 outputFolder="/groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/admixed/results/test/admixed_maf001/"
-snpDB="/groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/annotation/dbsnp.b150.vcf.gz"
+snpDB="/groups/umcg-weersma/tmp04/Michiel/GSA-redo/imputation/annotation/GRCh37/All_20170710.vcf.gz"
 cohort="GSA-admixed"
 
 
@@ -21,7 +21,7 @@ do
         -v filterAndAnnotateMichigan.job \
         "$cohort" \
         $vcfChr \
-        "${vcfFolder}/chr_${chr}/chr${chr}.dose.vcf.gz" \
+        "${vcfFolder}/chr${chr}/chr${chr}.dose.vcf.gz" \
         "${outputFolder}" \
         $snpDB :q:
         #sbatch -J "${cohort}${chr}" -o "${outputFolder}/chr_${chr}.out" -e "${outputFolder}/chr_${chr}.err" \
