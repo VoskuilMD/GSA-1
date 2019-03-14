@@ -622,14 +622,14 @@ With these 'cutted' vcf files we can do the actual post imputation check. We mak
 # To run the IC script you should now move all chromosomes back into the same directory
 mkdir $RUNDIR/imputation/admixed/results/postimputation
 for i in {1..22}; do
-	mv $RUNDIR/scripts/admixed_chr"$i"/chr"$i".dose.vcf.cut.gz $RUNDIR/imputation/admixed/results/postimputation;
+	mv $RUNDIR/imputation/results/admixed_chr"$i"/chr"$i".dose.vcf.cut.gz $RUNDIR/imputation/admixed/results/postimputation;
 	done
-mkdir $RUNDIR/imputation/admixed/ICoutput
+mkdir $RUNDIR/imputation/admixed/results/ICoutput
 mkdir $RUNDIR/imputation/european/results/postimputation
 for i in {1..22}; do
-	mv $RUNDIR/scripts/european_chr"$i"/chr"$i".dose.vcf.cut.gz $RUNDIR/imputation/european/results/postimputation;
+	mv $RUNDIR/results/european_chr"$i"/chr"$i".dose.vcf.cut.gz $RUNDIR/imputation/european/results/postimputation;
 	done	
-mkdir $RUNDIR/imputation/european/ICoutput
+mkdir $RUNDIR/imputation/european/results/ICoutput
 
 # Now we can submit the jobs to visualise the imputation results
 bash $RUNDIR/scripts/create_IC_jobs.sh
